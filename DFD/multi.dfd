@@ -1,0 +1,33 @@
+ Dfd (c)
+1
+1
+1
+0
+0
+4
+1
+19
+'ingresa un numero'
+5
+1
+4
+num1
+4
+1
+21
+'ingresa otro numero'
+5
+1
+4
+num2
+6
+1
+5
+multi
+11
+num1 * num2
+4
+1
+27
+num1,' * ',num2,' = ',multi
+1
