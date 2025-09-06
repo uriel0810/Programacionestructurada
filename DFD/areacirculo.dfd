@@ -1,0 +1,39 @@
+ Dfd (c)
+1
+1
+1
+0
+0
+6
+3
+2
+pi
+6
+3.1416
+5
+radio
+1
+0
+4
+area
+1
+0
+4
+1
+36
+'ingrese el radio del circulo en cm'
+5
+1
+5
+radio
+6
+1
+4
+area
+11
+pi*radio^2 
+4
+1
+37
+'el area del circulo es',area,'cm^2' 
+1
