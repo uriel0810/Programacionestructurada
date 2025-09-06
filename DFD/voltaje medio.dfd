@@ -1,0 +1,47 @@
+ Dfd (c)
+1
+1
+1
+0
+0
+6
+3
+2
+V1
+1
+0
+2
+V2
+1
+0
+6
+VMEDIO
+1
+0
+4
+1
+12
+'ingresa V1'
+5
+1
+2
+V1
+4
+1
+12
+'INGRESA V2'
+5
+1
+2
+V2
+6
+1
+6
+VMEDIO
+11
+(V1 + V2)/2
+4
+1
+38
+'EL VALOR DE VOLTAJE MEDIO',VMEDIO,'V'
+1
