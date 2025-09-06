@@ -1,0 +1,61 @@
+ Dfd (c)
+1
+1
+1
+0
+0
+6
+3
+2
+R1
+1
+0
+2
+R2
+1
+0
+2
+R3
+1
+0
+6
+1
+6
+Rtotal
+1
+0
+4
+1
+12
+'ingresa R1'
+5
+1
+2
+R1
+4
+1
+12
+'INGRESA R2'
+5
+1
+2
+R2
+4
+1
+12
+'INGRESA R3'
+5
+1
+2
+R3
+6
+1
+6
+Rtotal
+12
+R1 + R2 + R3
+4
+1
+60
+'EL VALOR DE LA RESISTENCIA TOTAL EN SERIE ES',Rtotal,'ohms'
+1
