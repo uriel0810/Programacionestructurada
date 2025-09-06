@@ -1,0 +1,47 @@
+ Dfd (c)
+1
+1
+1
+0
+0
+6
+3
+2
+cm
+6
+100000
+3
+mts
+4
+1000
+2
+km
+1
+0
+4
+1
+24
+'ingresa los kilometros'
+5
+1
+2
+km
+6
+2
+7
+result1
+5
+km*cm
+7
+result2
+6
+km*mts
+4
+1
+45
+'el resultado en centimetros es',result1,'cm'
+4
+1
+42
+'el resultado en metros es ; ',result2,'m'
+1
