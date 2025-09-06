@@ -1,0 +1,47 @@
+ Dfd (c)
+1
+1
+1
+0
+0
+6
+3
+4
+base
+1
+0
+6
+altura
+1
+0
+4
+area
+1
+0
+4
+1
+26
+'ingrese el valor de base'
+5
+1
+4
+base
+4
+1
+28
+'ingrese el valor de altura'
+5
+1
+6
+altura
+6
+1
+4
+area
+11
+base*altura
+4
+1
+39
+'el area del triangulo es',area,'cm^2' 
+1
