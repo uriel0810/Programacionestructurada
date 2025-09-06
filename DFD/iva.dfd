@@ -1,0 +1,35 @@
+ Dfd (c)
+1
+1
+1
+0
+0
+6
+2
+3
+iva
+4
+1.16
+6
+precio
+1
+0
+4
+1
+31
+'ingresa el costo del producto'
+5
+1
+6
+precio
+6
+1
+5
+total
+10
+precio*iva
+4
+1
+38
+'el costo total del producto es',total
+1
