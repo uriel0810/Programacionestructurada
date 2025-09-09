@@ -38,8 +38,8 @@ altura
 1
 4
 area
-11
-base*altura
+15
+(base*altura)/2
 4
 1
 39
