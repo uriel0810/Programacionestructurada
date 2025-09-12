@@ -1,4 +1,4 @@
-a=int(input("ingresa tu edad"))
+a=int(input("ingresa tu año de nacimiento"))
 año=2025
 formula= año - a
-print("naciste en el año" ,formula)
+print("tu edad es" ,formula)
