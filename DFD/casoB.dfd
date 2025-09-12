@@ -1,0 +1,57 @@
+ Dfd (c)
+1
+1
+1
+0
+0
+4
+1
+21
+'ingresa un numeraco'
+5
+1
+4
+num1
+4
+1
+24
+'ingresa otro numero we'
+5
+1
+4
+num2
+4
+1
+26
+'ingresa el tercer numero'
+5
+1
+4
+num3
+4
+1
+18
+'ingresa el num 4'
+5
+1
+4
+num4
+4
+1
+17
+'ingresa el num5'
+5
+1
+4
+num5
+6
+1
+6
+result
+30
+num1 + num2 * num3 - num4/num5
+4
+1
+24
+'el resultado es',result
+1
