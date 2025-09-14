@@ -1,5 +1,3 @@
 a=int(input("ingresa el primer numero"))
 b=int(input("ingresa el segundo numero"))
 print(a*b)
-print(a/b)
-print(a**2)
