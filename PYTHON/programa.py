@@ -4,11 +4,11 @@ def densidad_electrones_libres():
     # Constante de Boltzmann en eV/K
     k = 8.617e-5  
 
-    # Datos de materiales (Eg [eV], Nc [cm^-3], Nv [cm^-3])
+    # Constantes C de cada material (en cm^-3 K^-3/2)
     materiales = {
-        "Si": {"Eg": 1.12, "Nc": 2.8e19, "Nv": 1.04e19},
-        "Ge": {"Eg": 0.66, "Nc": 1.02e19, "Nv": 6.0e18},
-        "GaAs": {"Eg": 1.42, "Nc": 4.7e17, "Nv": 7.0e18}
+        "Ge": {"Eg": 0.66, "C": 1.66e15},
+        "Si": {"Eg": 1.12, "C": 5.29e15},
+        "GaAs": {"Eg": 1.42, "C": 2.10e18}
     }
 
     # Entrada del usuario
@@ -19,15 +19,14 @@ def densidad_electrones_libres():
         print("Material no disponible en la base de datos.")
         return
 
-    # Obtención de parámetros
+    # Parámetros del material
     Eg = materiales[material]["Eg"]
-    Nc = materiales[material]["Nc"]
-    Nv = materiales[material]["Nv"]
+    C = materiales[material]["C"]
 
-    # Cálculo de densidad intrínseca de electrones (electrones/cm^3)
-    ni = math.sqrt(Nc * Nv) * math.exp(-Eg / (2 * k * T))
+    # Fórmula: ni = C * T^(3/2) * exp(-Eg / (2*k*T))
+    ni = C * (T ** 1.5) * math.exp(-Eg / (2 * k * T))
 
-    print(f"\nLa densidad de electrones libres (N1) en {material} a {T} K es: {ni:.3e} electrones/cm^3")
+    print(f"\nLa densidad intrínseca de electrones en {material} a {T} K es: {ni:.3e} cm^-3")
 
-# Ejecutar función
+# Ejecutar la función
 densidad_electrones_libres()
