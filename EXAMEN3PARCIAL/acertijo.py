@@ -1,126 +1,102 @@
 from fractions import Fraction
-from itertools import combinations
+import itertools
 
-# Preguntas fijas del sistema
-PREGUNTAS = [
-    (1, 1, 1),
-    (2, 1, 0),
-    (0, 2, 1),
-    (3, 0, 1),
-    (0, 1, 3)
-]
+#  RESOLVER SISTEMA 3x3 EXACTO
 
-def resolver_sistema_3x3(ec):
-    """
-    ec: lista de 3 ecuaciones (a, b, c, resultado)
-    Usa eliminación Gaussiana con Fraction (aritmética exacta).
-    Devuelve (x, y, z) enteros si existe solución válida, o None.
-    """
-    # Construir matriz aumentada
-    M = []
-    for a, b, c, r in ec:
-        M.append([Fraction(a), Fraction(b), Fraction(c), Fraction(r)])
+def solve_3x3(A, B):
+    M = [[Fraction(A[i][j]) for j in range(3)] + [Fraction(B[i])] for i in range(3)]
 
-    # Eliminación Gaussiana
     for col in range(3):
-        # Encontrar renglón pivote
         pivot = None
-        for row in range(col, 3):
-            if M[row][col] != 0:
-                pivot = row
+        for r in range(col, 3):
+            if M[r][col] != 0:
+                pivot = r
                 break
         if pivot is None:
-            return None  # sistema sin solución única
+            return None
 
-        # Intercambiar si es necesario
         if pivot != col:
             M[col], M[pivot] = M[pivot], M[col]
 
-        # Normalizar fila pivote
-        factor = M[col][col]
-        M[col] = [v / factor for v in M[col]]
+        p = M[col][col]
+        M[col] = [v / p for v in M[col]]
 
-        # Eliminar en las otras filas
-        for row in range(3):
-            if row != col and M[row][col] != 0:
-                factor = M[row][col]
-                M[row] = [
-                    M[row][i] - factor * M[col][i]
-                    for i in range(4)
-                ]
+        for r in range(3):
+            if r != col:
+                factor = M[r][col]
+                M[r] = [M[r][c] - factor * M[col][c] for c in range(4)]
 
-    # Solución final
-    x, y, z = M[0][3], M[1][3], M[2][3]
+    return M[0][3], M[1][3], M[2][3]
 
-    # Deben ser enteros
-    if x.denominator == 1 and y.denominator == 1 and z.denominator == 1:
-        x, y, z = int(x), int(y), int(z)
-        if x >= 0 and y >= 0 and z >= 0:
-            return (x, y, z)
+
+#  DETECTAR LA RESPUESTA FALSA
+
+def solve_with_one_lie(questions, answers):
+
+    for lie in range(5):
+
+        eqs = []
+        vals = []
+
+        for i in range(5):
+            if i != lie:
+                eqs.append(questions[i])
+                vals.append(Fraction(answers[i]))
+
+        for combo in itertools.combinations(range(4), 3):
+            A = [eqs[i] for i in combo]
+            B = [vals[i] for i in combo]
+
+            sol = solve_3x3(A, B)
+            if sol is None:
+                continue
+
+            x, y, z = sol
+
+            if x < 0 or y < 0 or z < 0:
+                continue
+            if x != int(x) or y != int(y) or z != int(z):
+                continue
+
+            xi, yi, zi = int(x), int(y), int(z)
+
+            ok = True
+            for i in range(5):
+                if i == lie:
+                    continue
+                a, b, c = questions[i]
+                if a * xi + b * yi + c * zi != answers[i]:
+                    ok = False
+                    break
+
+            if ok:
+                return xi, yi, zi, lie
 
     return None
 
 
-def verificar(sol, preguntas, respuestas):
-    """Cuenta cuántas ecuaciones NO se cumplen."""
-    x, y, z = sol
-    fallos = 0
-    for (a, b, c), r in zip(preguntas, respuestas):
-        if a*x + b*y + c*z != r:
-            fallos += 1
-    return fallos
 
+questions = []
+answers = []
 
-def resolver_con_mentira(preguntas, respuestas):
-    """Prueba todas las combinaciones para detectar la mentira."""
-    soluciones = set()
+print("Ingresa 5 preguntas del tipo: a b c (enteros entre 0 y 10)")
+for i in range(5):
+    a, b, c = map(int, input(f"Pregunta {i+1} (a b c): ").split())
+    questions.append((a, b, c))
 
-    # la mentira puede estar en cualquier ecuación
-    for mentira in range(5):
-        restantes = [i for i in range(5) if i != mentira]
+print("\nIngresa ahora las respuestas de la Esfinge:")
+for i in range(5):
+    r = int(input(f"Respuesta {i+1}: "))
+    answers.append(r)
 
-        # tomar combinaciones de 3 ecuaciones correctas
-        for trio in combinations(restantes, 3):
-            ec = []
-            for idx in trio:
-                a, b, c = preguntas[idx]
-                r = respuestas[idx]
-                ec.append((a, b, c, r))
+sol = solve_with_one_lie(questions, answers)
 
-            sol = resolver_sistema_3x3(ec)
-            if sol is None:
-                continue
-
-            # verificar que solo exista una mentira
-            if verificar(sol, preguntas, respuestas) == 1:
-                soluciones.add(sol)
-
-    return list(soluciones)
-
-
-def main():
-    print("=== ACERTIJO DE LA ESFINGE ===\n")
-    respuestas = []
-
-    for i, (a, b, c) in enumerate(PREGUNTAS, start=1):
-        r = int(input(f"Pregunta {i}: ¿Patas totales de {a} axex, {b} basiliso, {c} centauro? "))
-        respuestas.append(r)
-
-    sols = resolver_con_mentira(PREGUNTAS, respuestas)
-
-    if len(sols) == 1:
-        x, y, z = sols[0]
-        print("\nSOLUCIÓN ENCONTRADA:")
-        print(f"Axex = {x}")
-        print(f"Basiliso = {y}")
-        print(f"Centauro = {z}")
-    elif len(sols) == 0:
-        print("\nNo se pudo encontrar solución válida.")
-    else:
-        print("\nHay varias soluciones posibles:")
-        for sol in sols:
-            print(sol)
-
-
-if __name__ == "__main__":
-    main()
+print("\n======================")
+if sol is None:
+    print("No se pudo determinar una solución consistente con una sola mentira.")
+else:
+    axex, basiliso, centauro, lie_index = sol
+    print(f"Axex = {axex} patas")
+    print(f"Basiliso = {basiliso} patas")
+    print(f"Centauro = {centauro} patas")
+    print(f"La mentira está en la pregunta #{lie_index + 1}")
