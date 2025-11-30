@@ -1,89 +1,153 @@
-#include <stdio.h>
+#!/usr/bin/env python3
+import sys
 
-#define JUG 4      // jugadores
-#define CARTAS 32  // 8 conjuntos × 4 cartas
+PLAYERS = {1,2,3,4}
+CARDS = 32
+SETS = 8
 
-// Dueño de cada carta (0 = desconocido, 1-4 = jugador actual, -1 = retirada en cuarteto)
-int dueño[CARTAS + 1] = {0};
+def card_set_idx(card):
+    """Carta 1..32 -> conjunto 1..8"""
+    return (card - 1) // 4 + 1
 
-// Saber a qué conjunto pertenece una carta (1_8)
-int conjunto(int carta) {
-    return (carta - 1) / 4 + 1;
-}
+def cards_of_set(s):
+    """Conjunto 1..8 -> lista de cartas [1..32]"""
+    base = (s - 1) * 4 + 1
+    return [base + i for i in range(4)]
 
-// Saber cuál es la primera carta de ese conjunto
-int baseConjunto(int cto) {
-    return (cto - 1) * 4 + 1;
-}
+def parse_int(tok):
+    try:
+        return int(tok)
+    except:
+        return None
 
-int main() {
-    int n;
-    scanf("%d", &n);
+def main():
+    data = sys.stdin.read().strip().splitlines()
+    if not data:
+        return
+    try:
+        n = int(data[0].strip())
+    except:
+        print("yes")
+        return
 
-    for (int accion = 1; accion <= n; accion++) {
-        char tipo[10];
-        int A, B, carta;
-        scanf("%s", tipo);
+    # possible_owners[c] = set of players who could have card c
+    # cards are 1..32
+    possible_owners = {c: set(PLAYERS) for c in range(1, CARDS+1)}
+    removed = set()  # cards already removed by a cuarteto
 
-        if (tipo[0] == 'A') {  
-            // ASK A B carta
-            scanf("%d %d %d", &A, &B, &carta);
+    line_no = 0
+    for i in range(1, n+1):
+        if i >= len(data)+1:
+            break
+        line = data[i].strip()
+        line_no += 1
+        if not line:
+            continue
+        parts = line.split()
+        action = parts[0].upper()
 
-            int cto = conjunto(carta);
-            int tiene = 0;
+        # ---- ASK A B C
+        if action == "ASK":
+            if len(parts) < 4:
+                print("no", line_no); return
+            A = parse_int(parts[1])
+            B = parse_int(parts[2])
+            C = parse_int(parts[3])
+            if any(x is None for x in (A,B,C)) or not (1<=A<=4 and 1<=B<=4 and 1<=C<=32):
+                print("no", line_no); return
 
-            // Verificar si el jugador A tiene al menos una carta del conjunto
-            int inicio = baseConjunto(cto);
-            for (int x = inicio; x < inicio + 4; x++) {
-                if (dueño[x] == A)
-                    tiene = 1;
-            }
+            s = card_set_idx(C)
+            cards = cards_of_set(s)
 
-            if (!tiene) {
-                printf("no %d\n", accion);
-                return 0;
-            }
+            # If for every card in set, A is NOT a possible owner -> impossible (A cannot have any card of set)
+            can_have_some = any(A in possible_owners[c] for c in cards if c not in removed)
+            if not can_have_some:
+                print("no", line_no)
+                return
+            # ASK doesn't change state
 
-        } else if (tipo[0] == 'G') {
-            // GIVE B A carta
-            scanf("%d %d %d", &B, &A, &carta);
+        # ---- GIVE B A C  (B gives card C to A)
+        elif action == "GIVE":
+            if len(parts) < 4:
+                print("no", line_no); return
+            B = parse_int(parts[1])
+            A = parse_int(parts[2])
+            C = parse_int(parts[3])
+            if any(x is None for x in (A,B,C)) or not (1<=A<=4 and 1<=B<=4 and 1<=C<=32):
+                print("no", line_no); return
 
-            // Si ya sabemos quién la tenía, debe coincidir
-            if (dueño[carta] != 0 && dueño[carta] != B) {
-                printf("no %d\n", accion);
-                return 0;
-            }
+            if C in removed:
+                print("no", line_no); return
 
-            dueño[carta] = A;
+            # If possible_owners says B is impossible for C -> B cannot give it => cheating
+            if B not in possible_owners[C]:
+                print("no", line_no)
+                return
 
-        } else if (tipo[0] == 'F') {
-            // FAIL B A carta  (B niega tenerla)
-            scanf("%d %d %d", &B, &A, &carta);
+            # After giving, we know A has C for sure
+            possible_owners[C] = {A}
 
-            // Si el estado dice que sí la tiene  trampa
-            if (dueño[carta] == B) {
-                printf("no %d\n", accion);
-                return 0;
-            }
+            # Also, since A now has C, remove A from possibilities of that card's duplicates? no need
+            # (we don't deduce exclusivity across cards except by direct actions)
 
-        } else if (tipo[0] == 'R') {
-            // RETIRA A cto
-            scanf("%d %d", &A, &carta);
-            int cto = carta;
+        # ---- DENY B C  or FAIL B C  (B says they don't have C)
+        elif action in ("DENY", "FAIL"):
+            if len(parts) < 3:
+                print("no", line_no); return
+            B = parse_int(parts[1])
+            C = parse_int(parts[2])
+            if any(x is None for x in (B,C)) or not (1<=B<=4 and 1<=C<=32):
+                print("no", line_no); return
 
-            int inicio = baseConjunto(cto);
+            if C in removed:
+                # if card already removed, denying is fine
+                continue
 
-            // Las 4 cartas deben pertenecer a A
-            for (int x = inicio; x < inicio + 4; x++) {
-                if (dueño[x] != A && dueño[x] != 0) {
-                    printf("no %d\n", accion);
-                    return 0;
-                }
-                dueño[x] = -1; // cuarteto retirado
-            }
-        }
-    }
+            # If we already know B has C -> cheating (they denied but we know they have it)
+            if possible_owners[C] == {B}:
+                print("no", line_no)
+                return
 
-    printf("yes\n");
-    return 0;
-}
+            # Remove B from possible owners of C
+            if B in possible_owners[C]:
+                possible_owners[C].discard(B)
+                if len(possible_owners[C]) == 0:
+                    # Nobody could have it => contradiction
+                    print("no", line_no)
+                    return
+
+        # ---- RETIRA A S  or SET A S
+        elif action in ("RETIRA", "SET", "REMOVE"):
+            if len(parts) < 3:
+                print("no", line_no); return
+            A = parse_int(parts[1])
+            S = parse_int(parts[2])
+            if any(x is None for x in (A,S)) or not (1<=A<=4 and 1<=S<=8):
+                print("no", line_no); return
+
+            cards = cards_of_set(S)
+            for c in cards:
+                if c in removed:
+                    # already removed -> cannot remove again
+                    print("no", line_no); return
+                # If possible_owners for c excludes A -> contradiction
+                if A not in possible_owners[c]:
+                    print("no", line_no)
+                    return
+            # mark removed and set owners to none
+            for c in cards:
+                removed.add(c)
+                possible_owners[c] = set()
+
+        else:
+            # try to accept alternate verbose forms (some examples used FAIL/GIVE/RETIRA)
+            # If unknown action -> error
+            print("no", line_no)
+            return
+
+    # if we never found contradiction
+    print("yes")
+
+
+if __name__ == "__main__":
+    main()
