@@ -1,85 +1,152 @@
-##1. Descripción del problema
-Un grupo de amigos planea un viaje y necesita dividir los gastos de gasolina, comida y hospedaje entre los participantes.
- El programa debe solicitar:
-Cantidad de personas.
+1. Programas basados en grafos y árboles
+
+Varios problemas se resolvieron usando grafos, ya sea para representar conexiones entre salas, túneles, botones, luces o estructuras físicas.
+
+Metodología utilizada
+
+Convertir cada sistema (túneles, pasillos, conexiones) en un grafo.
+
+Aplicar BFS o DFS para identificar componentes conectadas.
+
+Cuando era necesario, usar propiedades especiales como:
+
+Árboles → recorrer caminos mínimos y subárboles.
+
+Componentes → verificar si ciertas transformaciones eran posibles dentro de cada parte del grafo.
+
+Resultado
+
+Esto permitió resolver problemas como el de los recintos del zoológico, las salas con llave y trampa, y el mosaico en 2D, aplicando lógica de recorridos y validaciones de conectividad.
+
+2. Programas con álgebra lineal y operaciones en GF(2) o GF(3)
+
+Algunos ejercicios requerían modelar cambios de estado mediante sistemas de ecuaciones modulares, especialmente cuando:
+
+Las luces cambiaban con interruptores (XOR → GF(2))
+
+Los colores cambiaban con ciclos de 3 estados (GF(3))
+
+Los botones afectaban subconjuntos de luces.
+
+Metodología utilizada
+
+Representar cada interruptor/botón como una columna en una matriz.
+
+Representar cada luz como una fila.
+
+Modelar el problema como:
+
+A * x = b   sobre un cuerpo finito (mod 2 o mod 3)
 
 
-Monto de cada gasto (gasolina, comida, hospedaje).
+Resolver el sistema mediante:
 
+Eliminación Gaussiana sobre GF(2) o GF(3).
 
-Posteriormente, calculará el total y determinará cuánto debe pagar cada uno. Además, se deben aplicar condiciones especiales:
-Si algún participante consume más comida, su monto será mayor.
+Identificar variables libres.
 
+Seleccionar la solución de menor peso (minimizando interruptores presionados).
 
-Si alguien se hospeda en habitación privada, también pagará un extra.
+Resultado
 
+Este enfoque permitió obtener:
 
-El objetivo es lograr una distribución justa, eficiente y transparente de los gastos.
+La solución mínima en el problema de interruptores.
 
-2. Relevancia del uso de conceptos de programación
-Variables: permiten organizar los datos ingresados por el usuario (gastos, número de personas, condiciones especiales).
+La validación de imposibilidad cuando no existía solución.
 
+Modelos matemáticos correctos y eficientes.
 
-Operadores aritméticos: posibilitan calcular totales, promedios y ajustes individuales.
+3. Búsqueda de patrones en matrices (motivo y mosaico)
 
+Para el problema del mosaico se trataba de ubicar un patrón 2D dentro de una matriz mayor.
 
-Sentencias selectivas (if/else): ayudan a manejar las excepciones (más consumo de comida o habitación privada), garantizando equidad en el reparto.
+Metodología
 
+Implementar una búsqueda tipo fuerza bruta optimizada.
 
-3. Proceso de desarrollo
-a) Análisis
-Se identificaron las entradas, procesos y salidas:
-Entradas: número de personas, gasto en gasolina, gasto en comida, gasto en hospedaje, condiciones especiales.
+Recorrer todas las posiciones posibles del mosaico donde el patrón puede caber.
 
+Verificar celda por celda:
 
-Proceso: sumar los gastos, dividir entre los participantes, ajustar los pagos según las condiciones.
+Si el motivo tiene color → comparación estricta.
 
+Si el motivo tiene 0 → cualquier color es válido.
 
-Salida: cuánto paga cada persona.
+Resultado
 
+El programa identifica todas las coincidencias y las reporta de forma ordenada.
 
-b) Diseño en DFD (Diagrama de Flujo de Datos)
-Inicio
+4. Simulación y redes de procesamiento (Splitstream)
 
+En el sistema Split/Merge se debían rastrear elementos sin simular toda la secuencia.
 
-Ingreso de datos (personas y gastos).
+Metodología
 
+Analizar matemáticamente cómo se distribuyen los índices:
 
-Cálculo del gasto total.
+Split: índices impares a una salida, pares a otra.
 
+Merge: alterna entre dos entradas.
 
-División del gasto entre las personas.
+Seguir el índice hacia atrás para determinar de dónde proviene un elemento.
 
+Implementar funciones recursivas o directas para calcular la posición K sin generar toda la secuencia.
 
-Aplicación de condiciones especiales.
+Resultado
 
+Las consultas se resolvieron eficientemente sin construir toda la red.
 
-Mostrar resultados.
+5. Sistemas con restricciones físicas (mazmorra, zoológico, vientos)
 
+En estos problemas se exigía modelar condiciones más realistas:
 
-Fin
+Mazmorra
 
+Se utilizó la estructura de árbol y rutas para asegurar:
 
-c) Implementación en código
-Se implementó en lenguaje C utilizando:
-scanf para capturar datos.
+No visitar la trampa antes que la llave.
 
+Recorridos mínimos usando distancias acumuladas.
 
-Operadores + y / para cálculos.
+Zoológico
 
+Se verificó que el reacomodo fuera posible si:
 
-Sentencias if/else para las condiciones especiales.
-implementacion de loop con el comando for i 
+En cada componente conectada existe la misma cantidad de cada animal al inicio y al final.
 
+Esto se basó en las propiedades de permutaciones dentro de grafos.
 
-4. Dificultades encontradas y soluciones
-Problema: manejar excepciones individuales sin usar bucles.
+Cristal y vientos
 
+Para los límites de moléculas, se generaron configuraciones mínima y máxima respetando:
 
-Solución: aplicar condiciones if/else para cada participante de forma explícita.
+Que si hay molécula en (x, y) y viento (wx, wy), entonces no puede haber en (x+wx, y+wy) en la configuración mínima.
 
+En la máxima, se permiten más moléculas pero siempre respetando restricciones.
 
-Problema: dividir los gastos de forma justa cuando alguien consume más.
+Resultado
 
+Los modelos respetan tanto la lógica formal como la física simulada en cada problema.
 
-Solución: sumar recargos fijos al monto base correspondiente a esa persona.
+Conclusión General
+
+Los programas desarrollados aplican distintos enfoques según la naturaleza del problema:
+
+Grafos para conexiones físicas y movimientos.
+
+Álgebra lineal modular para cambios de estado (luces, botones, colores).
+
+Matching 2D para búsquedas en rejillas.
+
+Rutas óptimas en árboles.
+
+Simulación matemática para redes de procesamiento.
+
+Todos los algoritmos fueron diseñados para ser:
+
+Correctos en términos lógicos.
+
+Eficientes dentro de lo requerido.
+
+Claros y mantenibles, como lo haría un estudiante con base en los conceptos aprendidos.
